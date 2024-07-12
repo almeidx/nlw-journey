@@ -1,14 +1,9 @@
 import { z } from "zod";
 import { FastifyInstanceWithZod } from "../lib/zod.js";
 import { prisma } from "../lib/prisma.js";
-import dayjs from "dayjs";
 import { getMailClient } from "../lib/mail.js";
 import { getTestMessageUrl } from "nodemailer";
-import localizedFormat from "dayjs/plugin/localizedFormat.js";
-import "dayjs/locale/pt";
-
-dayjs.locale("pt");
-dayjs.extend(localizedFormat);
+import { dayjs } from "../lib/dayjs.js";
 
 export async function createTrip(app: FastifyInstanceWithZod) {
 	app.post(
@@ -27,7 +22,7 @@ export async function createTrip(app: FastifyInstanceWithZod) {
 					201: z.object({
 						tripId: z.string().uuid(),
 					}),
-					400: z.object({
+					"4xx": z.object({
 						error: z.string(),
 						message: z.string(),
 					}),
@@ -67,12 +62,12 @@ export async function createTrip(app: FastifyInstanceWithZod) {
 				select: { id: true },
 			});
 
-			const mail = await getMailClient();
-
 			const formattedStartDate = dayjs(startsAt).format("LLL");
 			const formattedEndDate = dayjs(endsAt).format("LLL");
 
 			const confirmationLink = `http://localhost:3333/trips/${trip.id}/confirm`;
+
+			const mail = await getMailClient();
 
 			const message = await mail.sendMail({
 				from: {
