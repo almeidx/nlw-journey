@@ -1,9 +1,10 @@
-import { z } from "zod";
-import { FastifyInstanceWithZod } from "../lib/zod.js";
-import { prisma } from "../lib/prisma.js";
-import { getMailClient } from "../lib/mail.js";
-import { dayjs } from "../lib/dayjs.js";
 import { getTestMessageUrl } from "nodemailer";
+import { z } from "zod";
+import { env } from "../env.js";
+import { dayjs } from "../lib/dayjs.js";
+import { getMailClient } from "../lib/mail.js";
+import { prisma } from "../lib/prisma.js";
+import type { FastifyInstanceWithZod } from "../lib/zod.js";
 
 export async function confirmTrip(app: FastifyInstanceWithZod) {
 	app.get(
@@ -53,7 +54,7 @@ export async function confirmTrip(app: FastifyInstanceWithZod) {
 			}
 
 			if (trip.isConfirmed) {
-				await reply.redirect(`http://localhost:3000/trips/${tripId}`);
+				await reply.redirect(`${env.WEB_BASE_URL}/trips/${tripId}`);
 				return;
 			}
 
@@ -73,7 +74,7 @@ export async function confirmTrip(app: FastifyInstanceWithZod) {
 
 			await Promise.all(
 				trip.participants.map(async (participant) => {
-					const confirmationLink = `http://localhost:3333/participants/${participant.id}/confirm`;
+					const confirmationLink = `${env.API_BASE_URL}/participants/${participant.id}/confirm`;
 
 					const message = await mail.sendMail({
 						from: {
@@ -100,7 +101,7 @@ export async function confirmTrip(app: FastifyInstanceWithZod) {
 				}),
 			);
 
-			await reply.redirect(`http://localhost:3000/trips/${tripId}`);
+			await reply.redirect(`${env.WEB_BASE_URL}/trips/${tripId}`);
 		},
 	);
 }

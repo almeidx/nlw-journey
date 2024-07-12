@@ -1,9 +1,10 @@
-import { z } from "zod";
-import { FastifyInstanceWithZod } from "../lib/zod.js";
-import { prisma } from "../lib/prisma.js";
-import { getMailClient } from "../lib/mail.js";
 import { getTestMessageUrl } from "nodemailer";
+import { z } from "zod";
+import { env } from "../env.js";
 import { dayjs } from "../lib/dayjs.js";
+import { getMailClient } from "../lib/mail.js";
+import { prisma } from "../lib/prisma.js";
+import type { FastifyInstanceWithZod } from "../lib/zod.js";
 
 export async function createTrip(app: FastifyInstanceWithZod) {
 	app.post(
@@ -65,7 +66,7 @@ export async function createTrip(app: FastifyInstanceWithZod) {
 			const formattedStartDate = dayjs(startsAt).format("LLL");
 			const formattedEndDate = dayjs(endsAt).format("LLL");
 
-			const confirmationLink = `http://localhost:3333/trips/${trip.id}/confirm`;
+			const confirmationLink = `${env.API_BASE_URL}/trips/${trip.id}/confirm`;
 
 			const mail = await getMailClient();
 

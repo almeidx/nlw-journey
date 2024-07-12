@@ -1,7 +1,7 @@
 import { z } from "zod";
-import { FastifyInstanceWithZod } from "../lib/zod.js";
-import { prisma } from "../lib/prisma.js";
 import { dayjs } from "../lib/dayjs.js";
+import { prisma } from "../lib/prisma.js";
+import type { FastifyInstanceWithZod } from "../lib/zod.js";
 
 export async function getActivities(app: FastifyInstanceWithZod) {
 	app.get(

@@ -1,16 +1,29 @@
 import { z } from "zod";
-import { env } from "../env.js";
 import { prisma } from "../lib/prisma.js";
 import type { FastifyInstanceWithZod } from "../lib/zod.js";
 
-export async function confirmParticipant(app: FastifyInstanceWithZod) {
+export async function getParticipant(app: FastifyInstanceWithZod) {
 	app.get(
-		"/participants/:participantId/confirm",
+		"/participants/:participantId",
 		{
 			schema: {
 				params: z.object({
 					participantId: z.string().uuid(),
 				}),
+				response: {
+					200: z.object({
+						participant: z.object({
+							id: z.string().uuid(),
+							name: z.string().nullable(),
+							email: z.string().email(),
+							isConfirmed: z.boolean(),
+						}),
+					}),
+					"4xx": z.object({
+						error: z.string(),
+						message: z.string(),
+					}),
+				},
 			},
 		},
 		async (request, reply) => {
@@ -21,8 +34,10 @@ export async function confirmParticipant(app: FastifyInstanceWithZod) {
 					id: participantId,
 				},
 				select: {
+					id: true,
+					name: true,
+					email: true,
 					isConfirmed: true,
-					tripId: true,
 				},
 			});
 
@@ -30,21 +45,7 @@ export async function confirmParticipant(app: FastifyInstanceWithZod) {
 				throw app.httpErrors.notFound("Participant not found");
 			}
 
-			if (participant.isConfirmed) {
-				await reply.redirect(`${env.WEB_BASE_URL}/trips/${participant.tripId}`);
-				return;
-			}
-
-			await prisma.participant.update({
-				where: {
-					id: participantId,
-				},
-				data: {
-					isConfirmed: true,
-				},
-			});
-
-			await reply.redirect(`${env.WEB_BASE_URL}/trips/${participant.tripId}`);
+			return { participant };
 		},
 	);
 }

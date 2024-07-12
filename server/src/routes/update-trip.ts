@@ -3,21 +3,22 @@ import { dayjs } from "../lib/dayjs.js";
 import { prisma } from "../lib/prisma.js";
 import type { FastifyInstanceWithZod } from "../lib/zod.js";
 
-export async function createActivity(app: FastifyInstanceWithZod) {
-	app.post(
-		"/trips/:tripId/activities",
+export async function updateTrip(app: FastifyInstanceWithZod) {
+	app.put(
+		"/trips/:tripId",
 		{
 			schema: {
 				params: z.object({
 					tripId: z.string().uuid(),
 				}),
 				body: z.object({
-					title: z.string().min(4),
-					occursAt: z.coerce.date(),
+					destination: z.string().min(4),
+					startsAt: z.coerce.date(),
+					endsAt: z.coerce.date(),
 				}),
 				response: {
-					201: z.object({
-						activityId: z.string().uuid(),
+					200: z.object({
+						tripId: z.string().uuid(),
 					}),
 					"4xx": z.object({
 						error: z.string(),
@@ -28,7 +29,15 @@ export async function createActivity(app: FastifyInstanceWithZod) {
 		},
 		async (request, reply) => {
 			const { tripId } = request.params;
-			const { title, occursAt } = request.body;
+			const { destination, startsAt, endsAt } = request.body;
+
+			if (dayjs(startsAt).isBefore(dayjs())) {
+				throw app.httpErrors.badRequest("startsAt must be in the future");
+			}
+
+			if (dayjs(startsAt).isAfter(endsAt)) {
+				throw app.httpErrors.badRequest("startsAt must be before endsAt");
+			}
 
 			const trip = await prisma.trip.findUnique({
 				where: {
@@ -37,6 +46,8 @@ export async function createActivity(app: FastifyInstanceWithZod) {
 				select: {
 					id: true,
 					endsAt: true,
+					startsAt: true,
+					destination: true,
 				},
 			});
 
@@ -44,27 +55,18 @@ export async function createActivity(app: FastifyInstanceWithZod) {
 				throw app.httpErrors.notFound("Trip not found");
 			}
 
-			if (dayjs(occursAt).isBefore(dayjs())) {
-				throw app.httpErrors.badRequest("Activity occurs in the past");
-			}
-
-			if (dayjs(occursAt).isAfter(dayjs(trip.endsAt))) {
-				throw app.httpErrors.badRequest("Activity occurs after trip ends");
-			}
-
-			const activity = await prisma.activity.create({
-				data: {
-					title,
-					occursAt,
-					tripId,
+			await prisma.trip.update({
+				where: {
+					id: tripId,
 				},
-				select: {
-					id: true,
+				data: {
+					destination,
+					startsAt,
+					endsAt,
 				},
 			});
 
-			reply.statusCode = 201;
-			return { activityId: activity.id };
+			return { tripId };
 		},
 	);
 }

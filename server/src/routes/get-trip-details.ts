@@ -2,9 +2,9 @@ import { z } from "zod";
 import { prisma } from "../lib/prisma.js";
 import type { FastifyInstanceWithZod } from "../lib/zod.js";
 
-export async function getLinks(app: FastifyInstanceWithZod) {
+export async function getTripDetails(app: FastifyInstanceWithZod) {
 	app.get(
-		"/trips/:tripId/links",
+		"/trips/:tripId",
 		{
 			schema: {
 				params: z.object({
@@ -12,13 +12,13 @@ export async function getLinks(app: FastifyInstanceWithZod) {
 				}),
 				response: {
 					200: z.object({
-						links: z.array(
-							z.object({
-								id: z.string().uuid(),
-								title: z.string(),
-								url: z.string().url(),
-							}),
-						),
+						trip: z.object({
+							id: z.string().uuid(),
+							destination: z.string(),
+							startsAt: z.date(),
+							endsAt: z.date(),
+							isConfirmed: z.boolean(),
+						}),
 					}),
 					"4xx": z.object({
 						error: z.string(),
@@ -35,16 +35,11 @@ export async function getLinks(app: FastifyInstanceWithZod) {
 					id: tripId,
 				},
 				select: {
+					id: true,
+					destination: true,
 					startsAt: true,
 					endsAt: true,
-
-					links: {
-						select: {
-							id: true,
-							title: true,
-							url: true,
-						},
-					},
+					isConfirmed: true,
 				},
 			});
 
@@ -52,7 +47,7 @@ export async function getLinks(app: FastifyInstanceWithZod) {
 				throw app.httpErrors.notFound("Trip not found");
 			}
 
-			return { links: trip.links };
+			return { trip };
 		},
 	);
 }
