@@ -22,6 +22,7 @@ export function ImportantLinks() {
 
 					<Link2 className="size-5 text-zinc-400" />
 				</div>
+
 				<div className="flex items-center justify-between gap-4">
 					<div className="space-y-1.5 flex-1">
 						<span className="block font-medium text-zinc-100">Reserva do AirBnB</span>

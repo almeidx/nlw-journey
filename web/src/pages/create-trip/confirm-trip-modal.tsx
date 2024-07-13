@@ -2,7 +2,12 @@ import { User, X } from "lucide-react";
 import type { FormEvent } from "react";
 import { Button } from "../../components/button.tsx";
 
-export function ConfirmTripModal({ closeConfirmTripModal, createTrip }: ConfirmTripModalProps) {
+export function ConfirmTripModal({
+	closeConfirmTripModal,
+	createTrip,
+	setOwnerEmail,
+	setOwnerName,
+}: ConfirmTripModalProps) {
 	return (
 		<div className="fixed inset-0 bg-black/60 flex items-center justify-center">
 			<div className="w-[640px] rounded-xl py-5 px-6 shadow-shape bg-zinc-900 space-y-5">
@@ -30,6 +35,7 @@ export function ConfirmTripModal({ closeConfirmTripModal, createTrip }: ConfirmT
 							className="bg-transparent text-lg placeholder:text-zinc-400 border-none outline-none flex-1"
 							placeholder="Nome completo"
 							name="name"
+							onChange={(event) => setOwnerName(event.target.value)}
 						/>
 					</div>
 
@@ -41,6 +47,7 @@ export function ConfirmTripModal({ closeConfirmTripModal, createTrip }: ConfirmT
 							placeholder="E-mail pessoal"
 							name="full_name"
 							type="email"
+							onChange={(event) => setOwnerEmail(event.target.value)}
 						/>
 					</div>
 
@@ -56,4 +63,6 @@ export function ConfirmTripModal({ closeConfirmTripModal, createTrip }: ConfirmT
 interface ConfirmTripModalProps {
 	closeConfirmTripModal: () => void;
 	createTrip: (event: FormEvent<HTMLFormElement>) => void;
+	setOwnerName: (name: string) => void;
+	setOwnerEmail: (email: string) => void;
 }

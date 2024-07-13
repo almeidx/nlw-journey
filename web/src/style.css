@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+.rdp {
+  --rdp-accent-color: #a1a1aa !important;
+}
+
 * {
   min-width: 0;
 }

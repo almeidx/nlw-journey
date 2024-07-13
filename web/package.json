@@ -10,8 +10,10 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"date-fns": "^3.6.0",
 		"lucide-react": "^0.407.0",
 		"react": "19.0.0-rc-85acf2d195-20240711",
+		"react-day-picker": "^8.10.1",
 		"react-dom": "19.0.0-rc-85acf2d195-20240711",
 		"react-router-dom": "^6.24.1",
 		"tailwind-variants": "^0.2.1"

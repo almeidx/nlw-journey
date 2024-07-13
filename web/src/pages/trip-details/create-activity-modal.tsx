@@ -1,7 +1,32 @@
 import { Calendar, Tag, X } from "lucide-react";
 import { Button } from "../../components/button.tsx";
+import type { FormEvent } from "react";
+import { useParams } from "react-router-dom";
 
 export function CreateActivityModal({ closeCreateActivityModal }: CreateActivityModalProps) {
+	const { tripId } = useParams();
+
+	async function createActivity(event: FormEvent<HTMLFormElement>) {
+		event.preventDefault();
+
+		const formData = new FormData(event.currentTarget);
+		const title = formData.get("title")?.toString();
+		const occursAt = formData.get("occurs_at")?.toString();
+
+		await fetch(`${import.meta.env.VITE_API_URL}/trips/${tripId}/activities`, {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json",
+			},
+			body: JSON.stringify({
+				title,
+				occursAt,
+			}),
+		});
+
+		window.location.reload();
+	}
+
 	return (
 		<div className="fixed inset-0 bg-black/60 flex items-center justify-center">
 			<div className="w-[640px] rounded-xl py-5 px-6 shadow-shape bg-zinc-900 space-y-5">
@@ -17,7 +42,7 @@ export function CreateActivityModal({ closeCreateActivityModal }: CreateActivity
 					<p className="text-left text-sm text-zinc-400">Todos os convidados podem ver as atividades criadas.</p>
 				</div>
 
-				<form className="space-y-3">
+				<form className="space-y-3" onSubmit={createActivity}>
 					<div className="h-14 px-4 bg-zinc-950 border border-zinc-800 rounded-lg flex items-center gap-2">
 						<Tag className="text-zinc-400 size-5" />
 
