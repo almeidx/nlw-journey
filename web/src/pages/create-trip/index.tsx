@@ -1,10 +1,10 @@
 import { type FormEvent, useState } from "react";
+import type { DateRange } from "react-day-picker";
 import { useNavigate } from "react-router-dom";
 import { ConfirmTripModal } from "./confirm-trip-modal.tsx";
 import { InviteGuestsModal } from "./invite-guests-modal.tsx";
 import { DestinationAndDateStep } from "./steps/destination-and-date-step.tsx";
 import { InviteGuestsStep } from "./steps/invite-guests-step.tsx";
-import type { DateRange } from "react-day-picker";
 
 export function CreateTripPage() {
 	const [isGuestsInputOpen, setIsGuestsInputOpen] = useState(false);

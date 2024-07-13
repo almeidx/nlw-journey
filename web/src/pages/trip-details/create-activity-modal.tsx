@@ -1,7 +1,7 @@
 import { Calendar, Tag, X } from "lucide-react";
-import { Button } from "../../components/button.tsx";
 import type { FormEvent } from "react";
 import { useParams } from "react-router-dom";
+import { Button } from "../../components/button.tsx";
 
 export function CreateActivityModal({ closeCreateActivityModal }: CreateActivityModalProps) {
 	const { tripId } = useParams();

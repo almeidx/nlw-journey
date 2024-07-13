@@ -1,7 +1,7 @@
-import { MapPin, Calendar, Settings2 } from "lucide-react";
-import { Button } from "../../components/button.tsx";
-import { useParams } from "react-router-dom";
+import { Calendar, MapPin, Settings2 } from "lucide-react";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
+import { Button } from "../../components/button.tsx";
 import { displayDatesToRange } from "../../utils/display-dates-to-range.ts";
 
 export function DestinationAndDateHeader() {
