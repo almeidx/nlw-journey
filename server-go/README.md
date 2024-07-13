@@ -22,4 +22,13 @@
 		export JOURNEY_DATABASE_PASSWORD=password
 
 6. Run compose:
-	- `docker compose up -d`
+	- `docker compose up -d --build`
+
+7. Run migrations:
+	- `go generate ./...`
+
+8. Generate sqlc:
+	- `go install github.com/sqlc-dev/sqlc/cmd/sqlc@latest`
+	- `sqlc generate -f ./internal/pgstore/sqlc.yaml`
+
+...
